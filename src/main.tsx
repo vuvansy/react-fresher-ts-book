@@ -10,6 +10,7 @@ import AboutPage from 'pages/client/about';
 import LoginPage from 'pages/client/auth/login';
 import RegisterPage from 'pages/client/auth/register';
 import "styles/global.scss"
+import HomePage from './pages/client/home';
 
 
 const router = createBrowserRouter([
@@ -17,6 +18,10 @@ const router = createBrowserRouter([
     path: "/",
     element: <Layout />,
     children: [
+      {
+        index: true, //Trang chủ
+        element: <HomePage />
+      },
       {
         path: "/book",
         element: <BookPage />,
