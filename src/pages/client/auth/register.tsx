@@ -1,4 +1,4 @@
-import { App, Button, Divider, Form, Input, message } from 'antd';
+import { App, Button, Divider, Form, Input } from 'antd';
 import type { FormProps } from 'antd';
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
