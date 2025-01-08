@@ -7,6 +7,8 @@ interface IAppContext {
     setIsAuthenticated: (v: boolean) => void;
     setUser: (v: IUser) => void;
     user: IUser | null;
+    isAppLoading: boolean;
+    setIsAppLoading: (v: boolean) => void;
 }
 
 
@@ -22,10 +24,11 @@ export const AppProvider = (props: TProps) => {
 
     const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
     const [user, setUser] = useState<IUser | null>(null);
+    const [isAppLoading, setIsAppLoading] = useState<boolean>(true);
 
     return (
         <CurrentAppContext.Provider value={{
-            isAuthenticated, user, setIsAuthenticated, setUser
+            isAuthenticated, user, setIsAuthenticated, setUser, isAppLoading, setIsAppLoading
         }}>
             {props.children}
         </CurrentAppContext.Provider>
@@ -36,7 +39,7 @@ export const AppProvider = (props: TProps) => {
 export const useCurrentApp = () => {
 
     const currentAppContext = useContext(CurrentAppContext);
-    
+
     if (!currentAppContext) {
         throw new Error(
             "useCurrentApp has to be used within <CurrentAppContext.Provider>"
