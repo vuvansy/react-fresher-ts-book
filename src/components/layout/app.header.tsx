@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { FaBug, FaReact } from 'react-icons/fa'
+import { FaBug} from 'react-icons/fa'
 import { FiShoppingCart } from 'react-icons/fi';
 import { VscSearchFuzzy } from 'react-icons/vsc';
 import { Divider, Badge, Drawer, Avatar, Popover } from 'antd';

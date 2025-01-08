@@ -125,7 +125,7 @@ const LayoutAdmin = () => {
                     collapsed={collapsed}
                     onCollapse={(value) => setCollapsed(value)}>
                     <div style={{ height: 32, margin: 16, textAlign: 'center', color: '#61dafb' }}>
-                        Admin BookWorm <MdOutlineMenuBook size={20} />
+                        Admin
                     </div>
                     <Menu
                         defaultSelectedKeys={[activeMenu]}
