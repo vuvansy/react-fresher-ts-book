@@ -5,11 +5,13 @@ import type { UploadProps } from 'antd';
 import { useState } from "react";
 import Exceljs from 'exceljs';
 import { Buffer } from 'buffer';
+import { bulkCreateUserAPI } from "@/services/api";
 
 const { Dragger } = Upload;
 interface IProps {
     openModalImport: boolean;
     setOpenModalImport: (v: boolean) => void;
+    refreshTable: () => void;
 }
 
 interface IDataImport {
@@ -19,10 +21,11 @@ interface IDataImport {
 }
 
 const ImportUser = (props: IProps) => {
-    const { setOpenModalImport, openModalImport } = props;
+    const { setOpenModalImport, openModalImport, refreshTable } = props;
 
-    const { message } = App.useApp();
+    const { message, notification } = App.useApp();
     const [dataImport, setDataImport] = useState<IDataImport[]>([]);
+    const [isSubmit, setIsSubmit] = useState<boolean>(false);
 
     const propsUpload: UploadProps = {
         name: 'file',
@@ -69,6 +72,10 @@ const ImportUser = (props: IProps) => {
                             jsonData.push(obj);
                         })
                     });
+
+                    jsonData = jsonData.map((item, index) => {
+                        return { ...item, id: index + 1 }
+                    })
                     setDataImport(jsonData)
                 }
 
@@ -80,19 +87,42 @@ const ImportUser = (props: IProps) => {
             console.log('Dropped files', e.dataTransfer.files);
         },
     };
+
+    const handleImport = async () => {
+        setIsSubmit(true);
+        const dataSubmit = dataImport.map(item => ({
+            fullName: item.fullName,
+            email: item.email,
+            phone: item.phone,
+            password: import.meta.env.VITE_USER_CREATE_DEFAULT_PASSWORD
+        }))
+        const res = await bulkCreateUserAPI(dataSubmit);
+        if (res.data) {
+            notification.success({
+                message: "Bulk Create Users",
+                description: `Success = ${res.data.countSuccess}. Error = ${res.data.countError}`
+            })
+        }
+        setIsSubmit(false);
+        setOpenModalImport(false);
+        setDataImport([]);
+        refreshTable();
+    }
+    
     return (
         <>
             <Modal title="Import data user"
                 width={"50vw"}
                 open={openModalImport}
-                onOk={() => setOpenModalImport(false)}
+                onOk={() => handleImport()}
                 onCancel={() => {
                     setOpenModalImport(false);
                     setDataImport([]);
                 }}
                 okText="Import data"
                 okButtonProps={{
-                    disabled: dataImport.length > 0 ? false : true
+                    disabled: dataImport.length > 0 ? false : true,
+                    loading: isSubmit
                 }}
                 //do not close when click outside
                 maskClosable={false}
@@ -109,6 +139,7 @@ const ImportUser = (props: IProps) => {
                 </Dragger>
                 <div style={{ paddingTop: 20 }}>
                     <Table
+                    rowKey={"id"}
                         title={() => <span>Dữ liệu upload:</span>}
                         dataSource={dataImport}
                         columns={[
